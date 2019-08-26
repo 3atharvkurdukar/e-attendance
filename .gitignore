@@ -5,6 +5,9 @@
 ### Excel ###
 .~lock.*.xlsx
 
+### VS Code ###
+.vscode/
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

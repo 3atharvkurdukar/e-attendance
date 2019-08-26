@@ -20,7 +20,7 @@ except Exception as e:
     exit(1)
 
 ## Open workbook for reading
-xl = pd.ExcelFiles('./database.xlsx')
+xl = pd.ExcelFile('./database.xlsx')
 dfStudent = xl.parse('student')
 writer = pd.ExcelWriter('./database.xlsx')
 
@@ -64,7 +64,7 @@ while True:
     mylcd.lcd_display_string('     choice:    ',2)
     i = int(input('\nEnter your choice : '))
     mylcd.lcd_clear()
-    
+
     if i == 1:      ## Enrolls new finger
         ## Gets some sensor information
         template_count = f.getTemplateCount()
@@ -76,10 +76,15 @@ while True:
 
         ## Tries to enroll new finger
         # Take user credentials
-        row = len(dfStudent.index)
-        dfStudent.iloc[row, 0] = int(input('Enter roll no: '))
-        dfStudent.iloc[row, 1] = input('Enter firstname: ')
-        dfStudent.iloc[row, 2] = input('Enter lastname: ')
+        row = dfStudent.shape[0]
+	print(dfStudent.shape[0])
+	print(row)
+	print(dfStudent)
+        dfStudent.append({
+		'RollNo': int(input('Enter roll no: ')),
+        	'FirstName': raw_input('Enter firstname: '),
+        	'LastName': raw_input('Enter lastname: ')
+	}, ignore_index=True)
 
         attempt = 0
         signatures = []
@@ -111,7 +116,7 @@ while True:
                     time.sleep(1)
                     mylcd.clear()
                     break
-                
+
                 print('Remove finger...')
                 mylcd.lcd_clear()
                 mylcd.lcd_display_string('Remove finger...', 1)
@@ -160,7 +165,7 @@ while True:
 
             dfStudent.to_excel(writer, 'student', index=False)
             writer.save()
-            
+
             print('Finger enrolled successfully!')
             mylcd.lcd_clear()
             mylcd.lcd_display_string('Enrolled at #' + positions, 1)
@@ -251,7 +256,7 @@ while True:
 
         ## Tries to delete the template of the finger
         try:
-            rollno = int(input('Please enter the Roll No. to delete: '))
+            rollno = input('Please enter the Roll No. to delete: ')
             for i in range(len(dfStudent.index)):
                 if (rollno == dfStudent.loc[i, 0]):
                     positions.append(dfStudent.loc[i, 4])
